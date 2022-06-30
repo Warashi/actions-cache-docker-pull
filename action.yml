@@ -38,7 +38,9 @@ runs:
         docker save registry:2 > /tmp/registry-image.tar
     - name: change dockerd config to use local registry
       shell: bash
-      run: jq '.["registry-mirrors"] += ["http://localhost:5000"]' /etc/docker/daemon.json | sudo tee /etc/docker/daemon.json
+      run: |
+        jq '.["registry-mirrors"] += ["http://localhost:5000"]' /etc/docker/daemon.json | tee daemon.json
+        sudo cp daemon.json /etc/docker/daemon.json
     - name: restart dockerd
       shell: bash
       run: sudo systemctl restart docker
