@@ -6,4 +6,6 @@ jobs:
     name: pull test
     steps:
       - uses: Warashi/actions-cache-docker-pull@main
+      - run: |
+          cat /etc/systemd/system/docker.service
       - run: docker pull nginx
