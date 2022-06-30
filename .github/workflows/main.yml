@@ -1,0 +1,9 @@
+on: [push]
+
+jobs:
+  pull:
+    runs-on: ubuntu-latest
+    name: pull test
+    steps:
+      - uses: Warashi/actions-cache-docker-pull
+      - run: docker pull nginx
