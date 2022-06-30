@@ -10,3 +10,5 @@ jobs:
       - run: systemctl status docker
       - run: docker info
       - run: docker pull nginx
+      - name: Dump docker logs
+        uses: jwalton/gh-docker-logs@v2
