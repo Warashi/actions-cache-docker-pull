@@ -10,5 +10,6 @@ jobs:
       - run: systemctl status docker
       - run: docker info
       - run: docker pull nginx
+      - run: sudo journalctl -u docker
       - name: Dump docker logs
         uses: jwalton/gh-docker-logs@v2
