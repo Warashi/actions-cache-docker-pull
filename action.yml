@@ -39,7 +39,7 @@ runs:
     - name: change dockerd config to use local registry
       shell: bash
       run: |
-        jq '.["registry-mirrors"] += ["http://localhost:5000"]' /etc/docker/daemon.json | tee daemon.json
+        jq '.["registry-mirrors"] += ["http://127.0.0.1:5000"]' /etc/docker/daemon.json | tee daemon.json
         sudo cp daemon.json /etc/docker/daemon.json
     - name: restart dockerd
       shell: bash
