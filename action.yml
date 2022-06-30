@@ -1,0 +1,47 @@
+name: 'Cache Docker Pull action'
+description: 'Create Docker Hub pull-through cache mirror and cache images.'
+inputs:
+  key:
+    description: 'cache key'
+    required: true
+    default: 'docker-registry-${{ github.sha }}'
+  restore-keys:
+    description: 'cache restore keys'
+    required: true
+    default: |
+      docker-registry-${{ github.sha }}
+      docker-registry-
+runs:
+  using: "composite"
+  steps:
+    - name: Cache docker registry image
+      uses: actions/cache@v3
+      id: registry-image-cache
+      with:
+        path: /tmp/registry-image.tar
+        key: docker-image-registry
+    - name: Cache docker registry contents (pulled images)
+      uses: actions/cache@v3
+      with:
+        path: /tmp/docker-registry
+        key: ${{ inputs.key }}
+        restore-keys: ${{ inputs.restore-keys }}
+    - name: load cached registry image
+      if: ${{ steps.registry-image-cache.outputs.cache-hit }}
+      shell: bash
+      run: docker load -i /tmp/registry-image.tar
+    - name: pull registry image
+      if: ${{ !steps.registry-image-cache.outputs.cache-hit }}
+      shell: bash
+      run: |
+        docker pull registry:2
+        docker save registry:2 > /tmp/registry-image.tar
+    - name: change dockerd config to use local registry
+      shell: bash
+      run: jq '.registry-mirrors += ["http://localhost:5000"]' /etc/docker/daemon.json | sudo tee /etc/docker/daemon.json
+    - name: restart dockerd
+      shell: bash
+      run: sudo systemctl restart docker
+    - name: start local registry
+      shell: bash
+      run: docker run -d -p 5000:5000 --name registry -v ${{ github.action_path }}/registry-config.yml:/etc/docker/registry/config.yml -v /tmp/docker-registry:/var/lib/registry registry:2
