@@ -5,5 +5,5 @@ jobs:
     runs-on: ubuntu-latest
     name: pull test
     steps:
-      - uses: Warashi/actions-cache-docker-pull
+      - uses: Warashi/actions-cache-docker-pull@main
       - run: docker pull nginx
