@@ -9,7 +9,7 @@ jobs:
       - run: systemctl show docker
       - run: systemctl status docker
       - run: docker info
-      - run: docker pull nginx
+      - run: docker pull nginx postgres ubuntu debian node
       - run: sudo journalctl -u docker
       - name: Dump docker logs
         uses: jwalton/gh-docker-logs@v2
